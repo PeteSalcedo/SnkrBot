@@ -1,12 +1,40 @@
-from bs4.element import SoupStrainer
+import os 
+import sys
+import six
+import pause
 import requests
-from bs4 import BeautifulSoup as bs
+import argparse
+import logging.config
 
-session = requests.session()
+from selenium import webdriver
+from deteutil import parser as date_parser
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support import expected_conditions as EC
 
-def get_sizes_in_stock():
-    global session
-    endpoint = ''
-    response = session.get(endpoint)
+logging.config.dictConfig({
+    "version":1,
+    "disable_existing_loggers":False,
+    "formatters":{
+        "default": {
+            "format":"%(asctime)s [PID %(process)d] [Thread %(thread)d] [%(levelname)s] [%(name)s] %(message)s"
+        }
+    },
+    "handlers":{
+        "console":{
+            "class":"logging.StreamHandler",
+            "level":"INFO",
+            "formatter":"default",
+            "stream":"ext://sys.stdout"
+        }
+    },
+    "root": {
+        "level":"INFO",
+        "handlers":[
+            "console"
+        ]
+    }
+})
 
-    soup = bs(response.text,"html.parser")
+
