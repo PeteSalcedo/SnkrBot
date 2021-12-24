@@ -69,5 +69,11 @@ def run(driver, username, password, product_id, sku_id, shoe_size, login_time=No
         try:
             try:
                 LOGGER.info("Adding item to cart")
-                add_item_to_cart
+                add_item_to_cart(driver=driver, product_id=product_id, sku_id=sku_id, size=shoe_size)
+            except Exception as e:
+                LOGGER.exception("failed to add item to cart " + str(e))
+                six.reraise(Exception, e, sys.exc_info()[2])
+        try:
+            LOGGER.info("Requesting  page: " + NIKE_CHECKOUT_URL)
+
 
