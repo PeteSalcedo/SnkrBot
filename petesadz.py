@@ -180,6 +180,7 @@ def add_item_to_cart(driver, product_id, sku_id, size):
     if response.status_code != 200:
         raise Exception("Request to add item tocart failes (code{}):{}".format(
             response.status_code, response.text))
+
 def wait_until_clickable(driver, xpath=None, class_name=None, duration=10000, frequency=0.01):
     if xpath:
         WebDriverWait(driver, duration, frequency).until(EC.element_to_be_clickable((By.XPATH, xpath)))
@@ -193,3 +194,46 @@ def wait_until_visible(driver, xpath=None, class_name=None, duration=10000, freq
     elif class_name:
         WebDriverWait(driver, duration, frequency).until(EC.visibility_of_element_located((By.CLASS_NAME, class_name)))
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--username", required=True)
+    parser.add_argument("--password", required=True)
+    parser.add_argument("--product-id", required=True)
+    parser.add_argument("--sku-id", required=True)
+    parser.add_argument("--shoe-size", required=True)
+    parser.add_argument("--login-time", default=None)
+    parser.add_argument("--release-time", default=None)
+    parser.add_argument("--screenshot-path", default=None)
+    parser.add_argument("--page-load-timeout", type=int, default=2)
+    parser.add_argument("--driver-type", default="firefox", choices=("firefox", "chrome"))
+    parser.add_argument("--headless", action="store_true")
+    parser.add_argument("--purchase", action="store_true")
+    parser.add_argument("--num-retries", type=int, default=1)
+    args = parser.parse_args()
+
+    driver = None
+    if args.driver_type == "firefox":
+        options = webdriver.FirefoxOptions()
+        if args.headless:
+            options.add_argument("--headless")
+        executable_path = None
+        if sys.platform == "darwin":
+            executable_path = "./bin/geckodriver_mac"
+        elif "linux" in sys.platform:
+            executable_path = "./bin/geckodriver_linux"
+        driver = webdriver.Firefox(executable_path=executable_path, firefox_options=options, log_path=os.devnull)
+    elif args.driver_type == "chrome":
+        options = webdriver.ChromeOptions()
+        if args.headless:
+            options.add_argument("headless")
+        executable_path = None
+        if sys.platform == "darwin":
+            executable_path = "./bin/chromedriver_mac"
+        elif "linux" in sys.platform:
+            executable_path = "./bin/chromedriver_linux"
+        driver = webdriver.Chrome(executable_path=executable_path, chrome_options=options)
+
+    run(driver=driver, username=args.username, password=args.password, product_id=args.product_id,
+        sku_id=args.sku_id, shoe_size=args.shoe_size, login_time=args.login_time, release_time=args.release_time,
+        page_load_timeout=args.page_load_timeout, screenshot_path=args.screenshot_path,
+        purchase=args.purchase, num_retries=args.num_retries)
