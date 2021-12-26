@@ -150,5 +150,22 @@ def click_place_order_button(driver):
     LOGGER.info("clicking place order button")
     driver.find_element_by_xpath(xpath).click()
 
-
+def add_item_to_cart(driver, product_id, sku_id, size):
+    cookies= driver.get_cookies()
+    params = {
+        "action": "addItem",
+        "lang_locale": "en_us",
+        "catalogId": "1",
+        "productId": product_id,
+        "qty":"1",
+        "price":"",
+        "skuAndSize":"{}:{}".format(sku_id, size),
+        "rt":"json",
+        "view":"3",
+        "skuId":sku_id,
+        "displaySize":"10"
+    }
     
+    headers = {
+        "user-agent":"Mozilla"
+    }
