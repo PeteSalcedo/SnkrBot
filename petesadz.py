@@ -112,11 +112,11 @@ def run(driver, username, password, product_id, sku_id, shoe_size, login_time=No
 
 def login(driver, username, password):
     try:
-        LOGGER.info('Requesting page: ' + NIKE_HOME_URL)
+        LOGGER.info("Requesting page: " + NIKE_HOME_URL)
         driver.get(NIKE_HOME_URL)
     except TimeoutException:
-        LOGGER.info("Page Load time out continuing anyway")
-    
+        LOGGER.info("Page load timed out but continuing anyway")
+
     LOGGER.info("Waiting for login button to become clickable")
     wait_until_clickable(driver=driver, xpath="//li[@js-hook='exp-join-login']/button")
 
@@ -142,100 +142,13 @@ def login(driver, username, password):
 
 
 def click_place_order_button(driver):
-    xpath = "//button[text()='Place Order']"
+    xpath = "//button[text()='Place order']"
 
-    LOGGER.info("Waiting for place order button to become clickable")
-    wait_until_clickable(driver, xpath=xpath, duration=10)
+    LOGGER.info("wiating for order buton to become clickable")
+    wait_until_clickable(driver, xpath=xpath, duration=20)
 
-    LOGGER.info("Clicking place order button")
+    LOGGER.info("clicking place order button")
     driver.find_element_by_xpath(xpath).click()
 
 
-def add_item_to_cart(driver, product_id, sku_id, size):
-    cookies = driver.get_cookies()
-    params = {
-        "action": "addItem",
-        "lang_locale": "en_US",
-        "catalogId": "1",
-        "productId": product_id,
-        "qty": "1",
-        "price": "",
-        "skuAndSize": "{}:{}".format(sku_id, size),
-        "rt": "json",
-        "view": "3",
-        "skuId": sku_id,
-        "displaySize": "10"
-    }
-    headers = {
-        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) "
-                      "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36",
-        "origin": "https://www.nike.com",
-        "accept-encoding": "gzip, deflate, br",
-        "accept-language": "en-US,en;q=0.9",
-        "accept": "*/*",
-        "scheme": "https"
-    }
-    response = requests.get(url=NIKE_CART_API_URL,
-                            params=params, headers=headers, cookies=cookies)
-    if response.status_code != 200:
-        raise Exception("Request to add item to cart failed (code {}): {}".format(
-            response.status_code, response.text))
-
-
-def wait_until_clickable(driver, xpath=None, class_name=None, duration=10000, frequency=0.01):
-    if xpath:
-        WebDriverWait(driver, duration, frequency).until(EC.element_to_be_clickable((By.XPATH, xpath)))
-    elif class_name:
-        WebDriverWait(driver, duration, frequency).until(EC.element_to_be_clickable((By.CLASS_NAME, class_name)))
-
-
-def wait_until_visible(driver, xpath=None, class_name=None, duration=10000, frequency=0.01):
-    if xpath:
-        WebDriverWait(driver, duration, frequency).until(EC.visibility_of_element_located((By.XPATH, xpath)))
-    elif class_name:
-        WebDriverWait(driver, duration, frequency).until(EC.visibility_of_element_located((By.CLASS_NAME, class_name)))
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--username", required=True)
-    parser.add_argument("--password", required=True)
-    parser.add_argument("--product-id", required=True)
-    parser.add_argument("--sku-id", required=True)
-    parser.add_argument("--shoe-size", required=True)
-    parser.add_argument("--login-time", default=None)
-    parser.add_argument("--release-time", default=None)
-    parser.add_argument("--screenshot-path", default=None)
-    parser.add_argument("--page-load-timeout", type=int, default=2)
-    parser.add_argument("--driver-type", default="firefox", choices=("firefox", "chrome"))
-    parser.add_argument("--headless", action="store_true")
-    parser.add_argument("--purchase", action="store_true")
-    parser.add_argument("--num-retries", type=int, default=1)
-    args = parser.parse_args()
-
-    driver = None
-    if args.driver_type == "firefox":
-        options = webdriver.FirefoxOptions()
-        if args.headless:
-            options.add_argument("--headless")
-        executable_path = None
-        if sys.platform == "darwin":
-            executable_path = "./bin/geckodriver_mac"
-        elif "linux" in sys.platform:
-            executable_path = "./bin/geckodriver_linux"
-        driver = webdriver.Firefox(executable_path=executable_path, firefox_options=options, log_path=os.devnull)
-    elif args.driver_type == "chrome":
-        options = webdriver.ChromeOptions()
-        if args.headless:
-            options.add_argument("headless")
-        executable_path = None
-        if sys.platform == "darwin":
-            executable_path = "./bin/chromedriver_mac"
-        elif "linux" in sys.platform:
-            executable_path = "./bin/chromedriver_linux"
-        driver = webdriver.Chrome(executable_path=executable_path, chrome_options=options)
-
-    run(driver=driver, username=args.username, password=args.password, product_id=args.product_id,
-        sku_id=args.sku_id, shoe_size=args.shoe_size, login_time=args.login_time, release_time=args.release_time,
-        page_load_timeout=args.page_load_timeout, screenshot_path=args.screenshot_path,
-        purchase=args.purchase, num_retries=args.num_retries)
+    
