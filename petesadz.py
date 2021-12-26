@@ -180,4 +180,16 @@ def add_item_to_cart(driver, product_id, sku_id, size):
     if response.status_code != 200:
         raise Exception("Request to add item tocart failes (code{}):{}".format(
             response.status_code, response.text))
-    
+def wait_until_clickable(driver, xpath=None, class_name=None, duration=10000, frequency=0.01):
+    if xpath:
+        WebDriverWait(driver, duration, frequency).until(EC.element_to_be_clickable((By.XPATH, xpath)))
+    elif class_name:
+        WebDriverWait(driver, duration, frequency).until(EC.element_to_be_clickable((By.CLASS_NAME, class_name)))
+
+
+def wait_until_visible(driver, xpath=None, class_name=None, duration=10000, frequency=0.01):
+    if xpath:
+        WebDriverWait(driver, duration, frequency).until(EC.visibility_of_element_located((By.XPATH, xpath)))
+    elif class_name:
+        WebDriverWait(driver, duration, frequency).until(EC.visibility_of_element_located((By.CLASS_NAME, class_name)))
+
