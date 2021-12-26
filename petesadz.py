@@ -1,5 +1,6 @@
 import os
 import sys
+from requests import status_codes
 import six
 import pause
 import requests
@@ -167,5 +168,16 @@ def add_item_to_cart(driver, product_id, sku_id, size):
     }
     
     headers = {
-        "user-agent":"Mozilla"
+        "user-agent":"Mozilla/5.0 (X11; Linux x86_64) ",
+        "origin": "https://www.nike.com",
+        "accepted-encoding": "gzip,deflate, br",
+        "accept-language": "en-US,EN;q=0.9",
+        "accept":"*/*",
+        "scheme":"https"
     }
+    response = requests.get(url=NIKE_CART_API_URL,
+                            params=params, headers=headers, cookies=cookies)
+    if response.status_code != 200:
+        raise Exception("Request to add item tocart failes (code{}):{}".format(
+            response.status_code, response.text))
+    
