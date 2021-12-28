@@ -12,17 +12,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 
-"""
-This is an experimental script which attempts at utilizing some Nike APIs.
-Current implementation:
-    1. Login with Selenium
-    2. Using the driver's stored cookies, make a Nike API request to add the desired item to your cart
-    3. Load the checkout page and place an order
-    
-Not sure if this will be any faster than the other script...
-"""
-
-
 logging.config.dictConfig({
     "version": 1,
     "disable_existing_loggers": False,
