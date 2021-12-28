@@ -1,6 +1,5 @@
 import os
 import sys
-from requests import status_codes
 import six
 import pause
 import requests
@@ -111,6 +110,7 @@ def run(driver, username, password, product_id, sku_id, shoe_size, login_time=No
 
     driver.quit()
 
+
 def login(driver, username, password):
     try:
         LOGGER.info("Requesting page: " + NIKE_HOME_URL)
@@ -143,43 +143,45 @@ def login(driver, username, password):
 
 
 def click_place_order_button(driver):
-    xpath = "//button[text()='Place order']"
+    xpath = "//button[text()='Place Order']"
 
-    LOGGER.info("wiating for order buton to become clickable")
-    wait_until_clickable(driver, xpath=xpath, duration=20)
+    LOGGER.info("Waiting for place order button to become clickable")
+    wait_until_clickable(driver, xpath=xpath, duration=10)
 
-    LOGGER.info("clicking place order button")
+    LOGGER.info("Clicking place order button")
     driver.find_element_by_xpath(xpath).click()
 
+
 def add_item_to_cart(driver, product_id, sku_id, size):
-    cookies= driver.get_cookies()
+    cookies = driver.get_cookies()
     params = {
         "action": "addItem",
-        "lang_locale": "en_us",
+        "lang_locale": "en_US",
         "catalogId": "1",
         "productId": product_id,
-        "qty":"1",
-        "price":"",
-        "skuAndSize":"{}:{}".format(sku_id, size),
-        "rt":"json",
-        "view":"3",
-        "skuId":sku_id,
-        "displaySize":"10"
+        "qty": "1",
+        "price": "",
+        "skuAndSize": "{}:{}".format(sku_id, size),
+        "rt": "json",
+        "view": "3",
+        "skuId": sku_id,
+        "displaySize": "10"
     }
-    
     headers = {
-        "user-agent":"Mozilla/5.0 (X11; Linux x86_64) ",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) "
+                      "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36",
         "origin": "https://www.nike.com",
-        "accepted-encoding": "gzip,deflate, br",
-        "accept-language": "en-US,EN;q=0.9",
-        "accept":"*/*",
-        "scheme":"https"
+        "accept-encoding": "gzip, deflate, br",
+        "accept-language": "en-US,en;q=0.9",
+        "accept": "*/*",
+        "scheme": "https"
     }
     response = requests.get(url=NIKE_CART_API_URL,
                             params=params, headers=headers, cookies=cookies)
     if response.status_code != 200:
-        raise Exception("Request to add item tocart failes (code{}):{}".format(
+        raise Exception("Request to add item to cart failed (code {}): {}".format(
             response.status_code, response.text))
+
 
 def wait_until_clickable(driver, xpath=None, class_name=None, duration=10000, frequency=0.01):
     if xpath:
@@ -193,6 +195,7 @@ def wait_until_visible(driver, xpath=None, class_name=None, duration=10000, freq
         WebDriverWait(driver, duration, frequency).until(EC.visibility_of_element_located((By.XPATH, xpath)))
     elif class_name:
         WebDriverWait(driver, duration, frequency).until(EC.visibility_of_element_located((By.CLASS_NAME, class_name)))
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
